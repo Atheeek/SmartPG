@@ -38,7 +38,6 @@ function App() {
           <Route path="expenses" element={<ExpensesPage />} /> 
           <Route path="reports" element={<ReportsPage />} /> {/* <-- Add this route */}
 
-          {/* You can add more protected pages here later, like: */}
           {/* <Route path="tenants" element={<TenantsPage />} /> */}
         </Route>
       </Route>
