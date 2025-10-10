@@ -1,5 +1,5 @@
 import express from 'express';
-import { createTenant, getTenantsByProperty, vacateTenant,updateTenant,getTenantDetails ,getAllTenants ,transferTenant  } from '../controllers/tenant.controller.js';
+import { createTenant, getTenantsByProperty, vacateTenant,updateTenant,getTenantDetails ,getAllTenants ,transferTenant, getNewTenantsInMonth, getVacatedTenantsInMonth  } from '../controllers/tenant.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 const router = express.Router();
 
@@ -16,5 +16,7 @@ router.get('/:id/details', getTenantDetails);
 router.get('/all', getAllTenants);
 // In backend/routes/tenant.routes.js
 router.put('/:id/transfer', transferTenant); // Add this line
+router.get('/joined-in-month', getNewTenantsInMonth);
+router.get('/vacated-in-month', getVacatedTenantsInMonth);
 
 export default router;

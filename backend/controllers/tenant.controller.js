@@ -3,13 +3,17 @@ import Tenant from '../models/tenant.model.js';
 import Bed from '../models/bed.model.js';
 import Payment from '../models/payment.model.js';
 import Property from '../models/property.model.js';
-import { addMonths, isBefore, startOfToday, startOfMonth, endOfMonth } from 'date-fns';
+import { addMonths, isBefore, startOfToday, startOfMonth, endOfMonth,isAfter  } from 'date-fns';
 
 // @desc    Create a new tenant and back-fill payments
 // @route   POST /api/tenants
 // @access  Private
 export const createTenant = async (req, res) => {
   const { fullName, phone, email, joiningDate, advancePaid, bedId } = req.body;
+    // --- NEW VALIDATION CHECK ---
+  if (isAfter(new Date(joiningDate), new Date())) {
+    return res.status(400).json({ message: "Joining date cannot be in the future." });
+  }
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
@@ -232,4 +236,59 @@ export const transferTenant = async (req, res) => {
   } finally {
     session.endSession();
   }
+};
+
+
+// In backend/controllers/tenant.controller.js
+
+export const getNewTenantsInMonth = async (req, res) => {
+    try {
+        const { propertyId, year, month } = req.query;
+        if (!year || !month) return res.status(400).json({ message: 'Year and month are required.' });
+
+        const startDate = startOfMonth(new Date(year, month - 1));
+        const endDate = endOfMonth(new Date(year, month - 1));
+        
+        const ownerProperties = await Property.find({ owner: req.owner._id }).select('_id');
+        let propertyIds = ownerProperties.map(p => p._id);
+
+        if (propertyId && propertyId !== 'all') {
+            propertyIds = propertyIds.filter(id => id.toString() === propertyId);
+        }
+        
+        const tenants = await Tenant.find({
+            property: { $in: propertyIds },
+            joiningDate: { $gte: startDate, $lte: endDate }
+        }).populate('property', 'name').populate('bed', 'rentAmount');
+        
+        res.json(tenants);
+    } catch (error) {
+        res.status(500).json({ message: `Server Error: ${error.message}` });
+    }
+};
+
+export const getVacatedTenantsInMonth = async (req, res) => {
+    try {
+        const { propertyId, year, month } = req.query;
+        if (!year || !month) return res.status(400).json({ message: 'Year and month are required.' });
+
+        const startDate = startOfMonth(new Date(year, month - 1));
+        const endDate = endOfMonth(new Date(year, month - 1));
+
+        const ownerProperties = await Property.find({ owner: req.owner._id }).select('_id');
+        let propertyIds = ownerProperties.map(p => p._id);
+        
+        if (propertyId && propertyId !== 'all') {
+            propertyIds = propertyIds.filter(id => id.toString() === propertyId);
+        }
+
+        const tenants = await Tenant.find({
+            property: { $in: propertyIds },
+            vacatedDate: { $gte: startDate, $lte: endDate }
+        }).populate('property', 'name').populate('bed', 'rentAmount');
+        
+        res.json(tenants);
+    } catch (error) {
+        res.status(500).json({ message: `Server Error: ${error.message}` });
+    }
 };
