@@ -55,36 +55,38 @@ const PropertyDetailPage = () => {
     const [editingTenant, setEditingTenant] = useState(null);
 
     // --- DATA FETCHING ---
-    const fetchData = useCallback(async () => {
-        try {
-            const [detailsRes, tenantsRes] = await Promise.all([
-                API.get(`/properties/${propertyId}/details`),
-                API.get(`/tenants?propertyId=${propertyId}`)
-            ]);
 
-            const { property, rooms, beds } = detailsRes.data;
-            setProperty(property);
-            setTenants(tenantsRes.data);
-            setBeds(beds);
+const fetchData = useCallback(async () => {
+    try {
+        // This is the optimization: run both API calls at the same time
+        const [detailsRes, tenantsRes] = await Promise.all([
+            API.get(`/properties/${propertyId}/details`),
+            API.get(`/tenants?propertyId=${propertyId}`)
+        ]);
+        
+        const { property, rooms, beds } = detailsRes.data;
+        setProperty(property);
+        setTenants(tenantsRes.data);
+        setBeds(beds);
 
-            const groupedByFloor = rooms.reduce((acc, room) => {
-                acc[room.floor] = acc[room.floor] || [];
-                acc[room.floor].push(room);
-                return acc;
-            }, {});
-            Object.keys(groupedByFloor).forEach(floor => {
-                groupedByFloor[floor].forEach(room => {
-                    room.beds = beds.filter(bed => bed.room === room._id);
-                });
+        const groupedByFloor = rooms.reduce((acc, room) => {
+            acc[room.floor] = acc[room.floor] || [];
+            acc[room.floor].push(room);
+            return acc;
+        }, {});
+        Object.keys(groupedByFloor).forEach(floor => {
+            groupedByFloor[floor].forEach(room => {
+                room.beds = beds.filter(bed => bed.room === room._id);
             });
-            setFloorPlan(groupedByFloor);
-        } catch (err) {
-            setError('Failed to fetch property details.');
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    }, [propertyId]);
+        });
+        setFloorPlan(groupedByFloor);
+    } catch (err) {
+        setError('Failed to fetch property details.');
+        console.error(err);
+    } finally {
+        setLoading(false);
+    }
+}, [propertyId]);
 
     useEffect(() => {
         setLoading(true);
