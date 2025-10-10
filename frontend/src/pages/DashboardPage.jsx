@@ -167,7 +167,7 @@ const DashboardPage = () => {
                     <CardTitle className="text-xl">Currently Outstanding Payments</CardTitle>
                     <p className="text-sm text-muted-foreground mt-1">All dues that require attention right now</p>
                   </div>
-                  <Link to="/app/payments" className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors group">
+                  <Link to="/payments" className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors group">
                     View All <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </CardHeader>
@@ -205,7 +205,7 @@ const DashboardPage = () => {
                     <Calendar className="mr-2 h-4 w-4" /> {isGeneratingDues ? 'Generating...' : 'Generate Today\'s Dues'}
                   </Button>
                   <Button variant="outline" className="w-full h-12" asChild>
-                    <Link to="/app/properties"><Building2 className="mr-2 h-4 w-4" /> Manage Properties</Link>
+                    <Link to="/properties"><Building2 className="mr-2 h-4 w-4" /> Manage Properties</Link>
                   </Button>
                 </CardContent>
               </Card>
