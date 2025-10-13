@@ -261,3 +261,62 @@ export const getHistoricalStats = async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 };
+
+
+// Add these to backend/controllers/property.controller.js
+
+export const updateProperty = async (req, res) => {
+    try {
+        const property = await Property.findById(req.params.id);
+        if (!property) return res.status(404).json({ message: 'Property not found' });
+
+        if (property.owner.toString() !== req.owner._id.toString()) {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        property.name = req.body.name || property.name;
+        property.address = req.body.address || property.address;
+
+        const updatedProperty = await property.save();
+        res.json(updatedProperty);
+    } catch (error) {
+        res.status(400).json({ message: `Error updating property: ${error.message}` });
+    }
+};
+
+export const deleteProperty = async (req, res) => {
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+        
+        const property = await Property.findById(req.params.id).session(session);
+        if (!property) throw new Error('Property not found');
+        if (property.owner.toString() !== req.owner._id.toString()) throw new Error('Not authorized');
+
+        // Safety Check: Prevent deleting a property that has active tenants
+        const activeTenantCount = await Tenant.countDocuments({ property: property._id, isActive: true }).session(session);
+        if (activeTenantCount > 0) {
+            throw new Error(`Cannot delete property. Please vacate all ${activeTenantCount} active tenants first.`);
+        }
+
+        // CASCADING DELETE LOGIC
+        const rooms = await Room.find({ property: property._id }).session(session);
+        const roomIds = rooms.map(r => r._id);
+        
+        await Payment.deleteMany({ property: property._id }, { session });
+        await Expense.deleteMany({ property: property._id }, { session });
+        await Tenant.deleteMany({ property: property._id }, { session }); // Deletes inactive tenants
+        await Bed.deleteMany({ room: { $in: roomIds } }, { session });
+        await Room.deleteMany({ property: property._id }, { session });
+        await property.deleteOne({ session });
+
+        await session.commitTransaction();
+        res.json({ message: 'Property and all associated data deleted successfully.' });
+
+    } catch (error) {
+        await session.abortTransaction();
+        res.status(400).json({ message: error.message || 'Failed to delete property.' });
+    } finally {
+        session.endSession();
+    }
+};

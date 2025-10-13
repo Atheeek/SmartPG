@@ -1,20 +1,37 @@
 import express from 'express';
-import { createProperty , getPropertyDetails , getProperties , getDashboardStats,bulkAddRoomsAndBeds ,getHistoricalStats  } from '../controllers/property.controller.js';
+// We only import the functions we are actually using
+import { 
+    createProperty, 
+    getProperties, 
+    getPropertyDetails, 
+    getHistoricalStats, 
+    bulkAddRoomsAndBeds, 
+    updateProperty, 
+    deleteProperty 
+} from '../controllers/property.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.use(protect); // Apply protection to all routes in this file
+// This one line protects ALL routes defined in this file.
+// Any request to /api/properties/* will now go through this security check first.
+router.use(protect);
 
+// Routes for the main collection (/api/properties)
+router.route('/')
+    .get(getProperties)
+    .post(createProperty);
 
-// Applying the 'protect' middleware to these routes
-router.route('/').post(protect, createProperty).get(protect, getProperties);
-router.route('/:id/details').get(protect, getPropertyDetails);
-router.get('/stats', getDashboardStats);
-router.post('/:id/bulk-add', bulkAddRoomsAndBeds);
+// Specific routes must come BEFORE dynamic routes with an :id
 router.get('/stats/historical', getHistoricalStats);
 
+// Routes that operate on a specific property by its ID (/api/properties/:id)
+router.route('/:id')
+    .put(updateProperty)
+    .delete(deleteProperty);
 
-
+// More specific routes for a single property
+router.get('/:id/details', getPropertyDetails);
+router.post('/:id/bulk-add', bulkAddRoomsAndBeds);
 
 export default router;

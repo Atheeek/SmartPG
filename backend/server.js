@@ -12,6 +12,7 @@ import paymentRoutes from './routes/payment.routes.js';
 import { startScheduler } from './utils/scheduler.js'; // <-- Import the scheduler
 import expenseRoutes from './routes/expense.routes.js';
 import reportRoutes from './routes/report.routes.js';
+import adminRoutes from './routes/admin.routes.js'; // <-- Import
 
 
 
@@ -32,6 +33,8 @@ app.use('/api/tenants', tenantRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/admin', adminRoutes); // <-- Add this line
+
 
 
 

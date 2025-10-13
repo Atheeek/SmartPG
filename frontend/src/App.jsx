@@ -12,7 +12,9 @@ import TenantProfilePage from './pages/TenantProfilePage'; // <-- Import the new
 import AllTenantsPage from './pages/AllTenantsPage'; // <-- Import the new page
 import ExpensesPage from './pages/ExpensesPage'; // <-- Import
 import ReportsPage from './pages/ReportsPage'; // <-- Import
-
+import AdminRoute from './components/AdminRoute'; // <-- Import new route guard
+import AdminOwnersPage from './pages/admin/AdminOwnersPage';
+import RegisterPage from './pages/RegisterPage'; // <-- Import
 
 
 
@@ -20,7 +22,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-
+      <Route path="/register" element={<RegisterPage />} /> {/* <-- Add this route */}
       {/* All routes inside this element are now protected */}
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<Layout />}>
@@ -42,6 +44,12 @@ function App() {
         </Route>
       </Route>
 
+         <Route path="/admin" element={<AdminRoute />}>
+          <Route element={<Layout />}>
+              <Route path="owners" element={<AdminOwnersPage />} />
+              {/* More admin pages will go here */}
+          </Route>
+      </Route>
       {/* You can add a 404 Not Found page here later */}
       {/* <Route path="*" element={<NotFoundPage />} /> */}
     </Routes>

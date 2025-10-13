@@ -5,34 +5,34 @@ import generateToken from '../utils/generateToken.js';
 // @desc    Register a new owner
 // @route   POST /api/auth/register
 // @access  Public
+// In backend/controllers/auth.controller.js
+
 export const registerOwner = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // 1. Check if owner already exists
     const ownerExists = await Owner.findOne({ email });
     if (ownerExists) {
       return res.status(400).json({ message: 'Owner with this email already exists' });
     }
 
-    // 2. Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // 3. Create a new owner in the database
+    // --- THIS IS THE FIX ---
+    // We REMOVED the manual hashing from here.
+    // We now pass the plain-text password directly to the model,
+    // and the pre-save hook in owner.model.js will handle hashing it correctly.
     const owner = await Owner.create({
       name,
       email,
-      password: hashedPassword,
+      password, // Pass the plain password
     });
 
     if (owner) {
-      // 4. Generate a token and send response
       const token = generateToken(res, owner._id);
       res.status(201).json({
         _id: owner._id,
         name: owner.name,
         email: owner.email,
+        role: owner.role,
         token,
       });
     } else {
@@ -46,23 +46,33 @@ export const registerOwner = async (req, res) => {
 // @desc    Authenticate/login an owner
 // @route   POST /api/auth/login
 // @access  Public
+// In backend/controllers/auth.controller.js
+
+// Replace your existing loginOwner function with this one
 export const loginOwner = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1. Find the owner by email
     const owner = await Owner.findOne({ email });
 
-    // 2. Check if owner exists and if passwords match
-    if (owner && (await bcrypt.compare(password, owner.password))) {
-      // 3. Generate a token and send response
+      if (owner && owner.status === 'Inactive') {
+    return res.status(403).json({ message: 'Your account has been deactivated. Please contact support.' });
+  }
+
+    // The 'matchPassword' method is now on the model, let's use it
+    if (owner && (await owner.matchPassword(password))) {
       const token = generateToken(res, owner._id);
+      
+      // --- THIS IS THE CORRECTED PART ---
       res.json({
         _id: owner._id,
         name: owner.name,
         email: owner.email,
+        role: owner.role, // <-- THE FIX IS HERE
         token,
       });
+      // --- END OF FIX ---
+
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
     }

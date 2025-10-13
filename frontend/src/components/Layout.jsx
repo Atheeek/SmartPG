@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ShieldCheckIcon } from '@heroicons/react/24/outline'; // <-- New Icon
+
 import { 
   HomeIcon, 
   BuildingOfficeIcon, 
@@ -15,18 +17,24 @@ import {
 import { Receipt } from 'lucide-react';
 
 const Layout = () => {
-  const { logout } = useAuth();
+  
+  const { logout, user } = useAuth(); // <-- Get the user object
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navItems = [
+ const navItems = [
     { to: '/dashboard', label: 'Dashboard', icon: HomeIcon },
     { to: '/properties', label: 'Properties', icon: BuildingOfficeIcon },
     { to: '/tenants', label: 'All Tenants', icon: UsersIcon },
     { to: '/payments', label: 'Payments', icon: BanknotesIcon },
     { to: '/expenses', label: 'Expenses', icon: Receipt },
-    { to: '/reports', label: 'Reports', icon: ChartBarIcon },
+    { to: '/reports', label: 'Reports', icon: ChartBarIcon }
   ];
+
+    // If the user is a SuperAdmin, add the admin link to the top of the list
+  if (user && user.role === 'SuperAdmin') {
+    navItems.unshift({ to: '/admin/owners', label: 'Admin: Owners', icon: ShieldCheckIcon });
+  }
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 

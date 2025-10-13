@@ -33,6 +33,8 @@ export const createTenant = async (req, res) => {
       fullName, phone, email: finalEmail, joiningDate, advancePaid,
       bed: bedId,
       property: fullBedDetails.room.property._id,
+            owner: req.owner._id, // <-- ADD THIS LINE
+
     }], { session });
     const tenant = tenantArray[0];
 

@@ -55,9 +55,36 @@ export const AuthProvider = ({ children }) => {
     navigate('/login');
   };
 
+   const register = async (name, email, password) => {
+    setLoading(true);
+    try {
+      const response = await API.post('/auth/register', { name, email, password });
+      const { token, ...userData } = response.data;
+      
+      localStorage.setItem('token', token);
+      setToken(token);
+      setUser(userData);
+      API.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      // Navigate to the correct dashboard based on role
+      if (userData.role === 'SuperAdmin') {
+          navigate('/admin/owners');
+      } else {
+          navigate('/dashboard');
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Registration failed', error.response?.data);
+      return { success: false, message: error.response?.data?.message || 'Registration failed' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, isInitialLoading, login, logout }}>
-      {/* NEW: Don't render children until the initial check is complete */}
+    <AuthContext.Provider value={{ user, token, loading, isInitialLoading, login, logout, register }}>
       {!isInitialLoading && children}
     </AuthContext.Provider>
   );

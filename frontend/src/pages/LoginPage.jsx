@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import { Link } from 'react-router-dom';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -58,6 +58,12 @@ const LoginPage = () => {
               </Button>
             </div>
           </form>
+           <div className="mt-4 text-center text-sm">
+      Don't have an account?{" "}
+      <Link to="/register" className="underline">
+        Sign Up
+      </Link>
+    </div>
         </CardContent>
       </Card>
     </div>
