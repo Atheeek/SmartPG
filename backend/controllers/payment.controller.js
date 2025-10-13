@@ -4,6 +4,7 @@ import Bed from '../models/bed.model.js';
 import Property from '../models/property.model.js';
 import { addMonths ,endOfMonth ,startOfMonth } from 'date-fns';
 import { generateDuesForAnniversaries } from '../services/payment.service.js';
+import { sendSms } from '../services/messaging.service.js';
 
 
 // @desc    Generate monthly due records for all active tenants of a property
@@ -80,28 +81,49 @@ export const getOutstandingPayments = async (req, res) => {
 // @route   PUT /api/payments/:id/mark-paid
 // @access  Private
 // In backend/controllers/payment.controller.js
+// At the top of backend/controllers/payment.controller.js
+
+// ... other imports
+
+// Replace the entire markAsPaid function with this
+// At the top of backend/controllers/payment.controller.js
+
+// ... other imports
+
+// Replace the entire markAsPaid function with this
+// At the top of backend/controllers/payment.controller.js
+
+// ... other imports
+
+// Replace the entire markAsPaid function with this
 export const markAsPaid = async (req, res) => {
     try {
-        console.log(`[PAID] Attempting to mark payment ${req.params.id} as paid.`);
         const payment = await Payment.findById(req.params.id).populate('tenant');
 
         if (!payment) {
-            console.log('[PAID-ERROR] Payment record not found.');
             return res.status(404).json({ message: 'Payment record not found' });
         }
         
-        // Ownership verification
         const property = await Property.findById(payment.tenant.property);
         if (property.owner.toString() !== req.owner._id.toString()) {
-            console.log('[PAID-ERROR] Unauthorized attempt.');
             return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        // Only proceed if the payment is actually due
+        if (payment.status === 'Paid') {
+            return res.status(400).json({ message: 'This payment has already been marked as paid.' });
         }
 
         payment.status = 'Paid';
         payment.paymentDate = new Date();
-        const updatedPayment = await payment.save(); // Ensure the change is saved
+        const updatedPayment = await payment.save();
 
-        console.log(`[PAID-SUCCESS] Successfully marked payment ${req.params.id} as paid.`);
+        // --- THIS IS THE NEW PART ---
+        // Send a "Thank You" SMS confirmation
+        const messageBody = `Thank you, ${payment.tenant.fullName}! We have received your rent payment of ₹${payment.amount} for the due date ${new Date(payment.dueDate).toLocaleDateString()}.`;
+        await sendSms(payment.tenant.phone, messageBody);
+        // --- END OF NEW PART ---
+
         res.json({ message: 'Payment marked as paid successfully', payment: updatedPayment });
 
     } catch (error) {

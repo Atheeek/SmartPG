@@ -201,9 +201,9 @@ const DashboardPage = () => {
               <Card className="shadow-sm">
                 <CardHeader><CardTitle className="text-xl">Quick Actions</CardTitle></CardHeader>
                 <CardContent className="space-y-3 pt-6">
-                  {/* <Button className="w-full h-12" onClick={handleGenerateDues} disabled={isGeneratingDues}>
+                  <Button className="w-full h-12" onClick={handleGenerateDues} disabled={isGeneratingDues}>
                     <Calendar className="mr-2 h-4 w-4" /> {isGeneratingDues ? 'Generating...' : 'Generate Today\'s Dues'}
-                  </Button> */}
+                  </Button>
                   <Button variant="outline" className="w-full h-12" asChild>
                     <Link to="/properties"><Building2 className="mr-2 h-4 w-4" /> Manage Properties</Link>
                   </Button>

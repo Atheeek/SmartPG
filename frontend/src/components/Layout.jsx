@@ -14,7 +14,8 @@ import {
   ChartBarIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
-import { Receipt } from 'lucide-react';
+import { Hamburger, Receipt } from 'lucide-react';
+import { HamburgerMenuIcon } from '@radix-ui/react-icons';
 
 const Layout = () => {
   
@@ -116,7 +117,7 @@ const Layout = () => {
             onClick={closeMobileMenu}
             className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
           >
-            <XMarkIcon className="h-6 w-6" />
+            <XMarkIcon className="h-6 stroke-[3px] w-6" />
           </button>
         </div>
 

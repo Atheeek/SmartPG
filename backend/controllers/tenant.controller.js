@@ -294,3 +294,53 @@ export const getVacatedTenantsInMonth = async (req, res) => {
         res.status(500).json({ message: `Server Error: ${error.message}` });
     }
 };
+
+// Add this new function to backend/controllers/tenant.controller.js
+
+export const vacateTenantWithFinalPayment = async (req, res) => {
+    const { finalPaymentStatus } = req.body; // Expecting 'Paid', 'Due', or 'Cancelled'
+
+    if (!['Paid', 'Due', 'Cancelled'].includes(finalPaymentStatus)) {
+        return res.status(400).json({ message: 'Invalid final payment status provided.' });
+    }
+
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+        
+        const tenant = await Tenant.findById(req.params.id).session(session);
+        if (!tenant) throw new Error('Tenant not found');
+        if (!tenant.isActive) throw new Error('This tenant has already been vacated.');
+
+        // 1. Mark tenant as inactive
+        tenant.isActive = false;
+        tenant.vacatedDate = new Date();
+        await tenant.save({ session });
+        
+        // 2. Make their old bed available
+        await Bed.findByIdAndUpdate(tenant.bed, { status: 'Available' }, { session });
+
+        // 3. Find the most recent "Due" payment to apply the final status to
+        const lastDuePayment = await Payment.findOne({ tenant: tenant._id, status: 'Due' }).sort({ dueDate: -1 }).session(session);
+
+        if (lastDuePayment) {
+            if (finalPaymentStatus === 'Paid') {
+                lastDuePayment.status = 'Paid';
+                lastDuePayment.paymentDate = new Date();
+                await lastDuePayment.save({ session });
+            } else if (finalPaymentStatus === 'Cancelled') {
+                lastDuePayment.status = 'Vacated'; // Use our 'Vacated' status for cancellation
+                await lastDuePayment.save({ session });
+            }
+            // If finalPaymentStatus is 'Due', we do nothing, it remains due.
+        }
+
+        await session.commitTransaction();
+        res.json({ message: 'Tenant has been vacated successfully.' });
+    } catch (error) {
+        await session.abortTransaction();
+        res.status(400).json({ message: error.message || 'Failed to vacate tenant.' });
+    } finally {
+        session.endSession();
+    }
+};

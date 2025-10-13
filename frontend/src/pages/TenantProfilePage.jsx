@@ -148,13 +148,17 @@ const getMonthYear = (dateString) => {
                   <TableRow key={p._id}>
                     <TableCell className="font-medium">{getMonthYear(p.dueDate)}</TableCell>
                     <TableCell>₹{p.amount.toLocaleString('en-IN')}</TableCell>
-                    <TableCell>
-                      {p.status === 'Due' ? (
-                        <Badge variant="destructive">{p.status}</Badge>
-                      ) : (
-                        <Badge variant="default" className="bg-green-600 hover:bg-green-700">Paid</Badge>
-                      )}
-                    </TableCell>
+
+<TableCell>
+  {p.status === 'Due' ? (
+    <Badge variant="destructive">{p.status}</Badge>
+  ) : p.status === 'Paid' ? (
+    <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Paid</Badge>
+  ) : (
+    // --- THIS IS THE NEW PART ---
+    <Badge variant="secondary">{p.status}</Badge> // A neutral grey badge for 'Vacated'
+  )}
+</TableCell>
                     <TableCell>{p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : 'N/A'}</TableCell>
                   </TableRow>
                 )) : (

@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BedDouble, Building, Users, CalendarIcon, PlusCircle, Home, Pencil, ArrowRight, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
 const PropertyDetailPage = () => {
     // --- STATE MANAGEMENT ---
     const { propertyId } = useParams();

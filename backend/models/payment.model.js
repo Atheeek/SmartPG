@@ -6,7 +6,9 @@ const paymentSchema = new mongoose.Schema({
   property: { type: mongoose.Schema.Types.ObjectId, ref: 'Property', required: true },
   amount: { type: Number, required: true },
   dueDate: { type: Date, required: true }, // <-- REPLACED month and year
-  status: { type: String, enum: ['Paid', 'Due'], default: 'Due' },
+  status: { type: String, 
+    enum: ['Paid', 'Due', 'Vacated'], // <-- ADD 'Vacated'
+     default: 'Due' },
   paymentDate: { type: Date },
 }, { timestamps: true });
 
