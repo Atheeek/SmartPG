@@ -22,9 +22,9 @@ import Landingpage from './pages/Landingpage'; // <-- Import
 function App() {
   return (
     <Routes>
-      <Route path="/landing" element={<Landingpage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} /> {/* <-- Add this route */}
+      <Route path="/landing" element={<Landingpage />} />
       {/* All routes inside this element are now protected */}
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<Layout />}>
