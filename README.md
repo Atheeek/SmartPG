@@ -9,7 +9,6 @@
 PG-Pal is a full-stack, commercial-grade Software as a Service (SaaS) platform designed for Paying Guest (PG), hostel, and co-living owners to automate and professionalize their entire business operations.
 
 ***
-> **Note:** Replace the image link below with a real screenshot or GIF of your application's dashboard.
 
 ![PG-Pal Dashboard Mockup](https://i.ibb.co/Kc5p3mFt/Screenshot-2025-10-14-223805.png) 
 
