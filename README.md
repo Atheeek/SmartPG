@@ -10,7 +10,7 @@ PG-Pal is a full-stack, commercial-grade Software as a Service (SaaS) platform d
 
 ***
 
-![PG-Pal Dashboard Mockup](https://i.ibb.co/Kc5p3mFt/Screenshot-2025-10-14-223805.png) 
+![PG-Pal Dashboard Mockup]((https://instasize.com/p/89c3709a2b46ae7254d75a846818877d3edbf015a750b3c9c395db5dacde5c58)) 
 
 ***
 
@@ -143,5 +143,7 @@ Please fork the repo and create a pull request. You can also simply open an issu
 4.  Push to the Branch (`git push origin feature/AmazingFeature`)
 5.  Open a Pull Request
 
-      
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.      
 
