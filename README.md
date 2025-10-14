@@ -113,7 +113,7 @@ You will need the following software installed on your machine:
     ```
     - The React app will be available at `http://localhost:5173`.
     - The Node.js server will be running on `http://localhost:5000`.
-
+```
 pg-pal/
 ├── packages/
 │   ├── client/       # React Frontend (Vite)
@@ -130,7 +130,7 @@ pg-pal/
 ├── .gitignore
 ├── package.json      # Root package.json with scripts
 └── README.md
-
+```
 
 ## 🤝 Contributing
 
@@ -146,6 +146,3 @@ Please fork the repo and create a pull request. You can also simply open an issu
 
       
 
-## 📂 Project Structure
-
-The project uses a monorepo structure to keep the frontend and backend code in a single repository for easier management.
