@@ -15,7 +15,7 @@ import ReportsPage from './pages/ReportsPage'; // <-- Import
 import AdminRoute from './components/AdminRoute'; // <-- Import new route guard
 import AdminOwnersPage from './pages/admin/AdminOwnersPage';
 import RegisterPage from './pages/RegisterPage'; // <-- Import
-import Landingpage from './pages/Landingpage'; // <-- Import
+// import Landingpage from './pages/Landingpage'; // <-- Import
 
 
 
@@ -24,7 +24,7 @@ function App() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} /> {/* <-- Add this route */}
-      <Route path="/landing" element={<Landingpage />} />
+      {/* <Route path="/landing" element={<Landingpage />} /> */}
       {/* All routes inside this element are now protected */}
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<Layout />}>
