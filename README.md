@@ -10,7 +10,7 @@ PG-Pal is a full-stack, commercial-grade Software as a Service (SaaS) platform d
 
 ***
 
-![PG-Pal Dashboard Mockup](assets/Screenshot-2025-10-14-223805.png) 
+![PG-Pal Dashboard Mockup](assets/Screenshot.png) 
 
 ***
 
